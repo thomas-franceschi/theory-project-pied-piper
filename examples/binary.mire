@@ -1,0 +1,4 @@
+1*(:#00*);                   // append binary counter
+{1*(1:)#(0|1)*(0:1)(1:0)*};  // decrement unary and increment binary
+(#:)(0|1)*                   // remove separator
+
