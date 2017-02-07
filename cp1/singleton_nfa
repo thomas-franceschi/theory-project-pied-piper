@@ -59,46 +59,7 @@ class NFA(object):
 		for transition in self.transitions:
 			if a == transition[1]:
 				print transition
-
-def read_NFA(filename):
-	with open(filename, 'r') as nf:
-		raw_nfa = nf.read()
-	nf.closed
-
-	# separate nfa components
-	raw_nfa = raw_nfa.split('\n')
-
-	# sanitize nfa of comments
-	nfa = []
-	for line in raw_nfa:
-		line = re.sub('\s*//.*', '', line)
-		nfa.append(line)
-
-	# parse states
-	states = nfa[0].split(" ")
-
-	# parse alphabet
-	alphabet = nfa[1].split(" ")
-
-	# parse start state
-	start = nfa[2]
-
-	# parse accept states
-	accepts = nfa[3].split(" ")
-
-	# parse transitions
-	transitionList = []
-	transitions = []
-	for i in range(4, len(nfa) - 1):
-		transitionList.append(nfa[i])
-
-	for transition in transitionList:
-		transition = transition.split(" ")
-		transitions.append((transition[0], transition[1], transition[2]))
-
-	nfa = NFA(states, alphabet, start, accepts, transitions)
-	return nfa;
-
+				
 def write_NFA(nfa):
 	# write list of states
 	for state in nfa.states:

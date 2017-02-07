@@ -156,7 +156,7 @@ def intersection(nfa1, nfa2):
 	accept = []
 	for state in states:
 		# if either state is an accept state in either list
-		if state[0] in nfa1.accept or state[1] in nfa2.accept:
+		if state[0] in nfa1.accept and state[1] in nfa2.accept:
 			accept.append(state)
 
 	# determine transitions
@@ -165,9 +165,9 @@ def intersection(nfa1, nfa2):
 		for t1 in nfa2.transitions:
 			if t0[1] == t1[1]:
 				transitions.append(((t0[0], t1[0]), t0[1], (t0[2], t1[2])))
-			elif t0[1] == "&":
+			if t0[1] == "&":
 				transitions.append(((t0[0], t1[0]), "&", (t0[2], t1[0])))
-			elif t1[1] == "&":
+			if t1[1] == "&":
 				transitions.append(((t0[0], t1[0]), "&", (t0[0], t1[2])))
 
 	nfa = NFA(states, alphabet, start, accept, transitions)
@@ -175,7 +175,7 @@ def intersection(nfa1, nfa2):
 
 if __name__ == "__main__":
 	nfa0 = read_NFA(sys.argv[1])
-	nfa1 = read_NFA(sys.argv[1])
+	nfa1 = read_NFA(sys.argv[2])
 
 	intersect_nfa = intersection(nfa0, nfa1)
 
