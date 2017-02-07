@@ -116,38 +116,37 @@ def read_NFA(filename):
 def write_NFA(nfa):
 	# write list of states
 	for state in nfa.states:
-		sys.stdout.write(state)
-		sys.stdout.write(" ")
+		sys.stdout.write("(" + state[0] + "," + state[1] + ")")
+		if state != nfa.states[len(nfa.states)-1]:
+			sys.stdout.write(" ")
 
 	sys.stdout.write("\n")
 
 	# write symbols in alphabet
 	for symbol in nfa.alphabet:
 		sys.stdout.write(symbol)
-		sys.stdout.write(" ")
+		if symbol != nfa.alphabet[len(nfa.alphabet)-1]:
+			sys.stdout.write(" ")
 
 	sys.stdout.write("\n")
 
 	# write start state
-	sys.stdout.write(nfa.start)
+	sys.stdout.write("(" + nfa.start[0] + "," + nfa.start[1] + ")")
 
 	sys.stdout.write("\n")
 
 	# write list of accept states
 	for accept in nfa.accept:
-		sys.stdout.write(accept)
-		sys.stdout.write(" ")
-
+		sys.stdout.write("(" + accept[0] + "," + accept[1] + ")")
+		if accept != nfa.accept[len(nfa.accept)-1]:
+			sys.stdout.write(" ")
+	
 	sys.stdout.write("\n")
 
 	# write transitions
 	for transition in nfa.transitions:
 		# current state + input symbol + next state
-		sys.stdout.write(transition[0])
-		sys.stdout.write(" ")
-		sys.stdout.write(transition[1])
-		sys.stdout.write(" ")
-		sys.stdout.write(transition[2])
+		sys.stdout.write("(" + transition[0][0] + "," + transition[0][1] + ") " + transition[1] + " (" + transition[2][0] + "," + transition[2][1] + ")")
 		sys.stdout.write("\n")
 
 # -----------------------------------------------------------------------------------
@@ -255,7 +254,7 @@ if __name__ == "__main__":
 
 	newnfa = intersection(nfa1, nfa2)
 
-	print newnfa.start
+	write_NFA(newnfa)
 	# nfa = read_NFA("../examples/sipser-n1.nfa")
 	# write_NFA(nfa, "./test-com.nfa")
 
