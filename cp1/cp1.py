@@ -4,6 +4,8 @@
 
 # TODO
 
+# source ~lsyers/Pub/.cshrc
+
 	# test scripts for singleton, emptiness, and intersection
 
 # Questions
