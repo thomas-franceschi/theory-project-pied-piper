@@ -1,0 +1,144 @@
+#!/usr/bin/env python2.7
+
+# Kyle Williams and Thomas Franceschi
+
+import sys
+import re
+import Queue
+
+class NFA(object):
+	def __init__(self, states, alphabet, start, accept, transitions):
+		self.states = states
+		self.alphabet = alphabet
+		self.start = start
+		self.accept = accept
+
+		# check for valid transitions before adding transitions dict to nfa object
+		for transition in transitions:
+			if transition[0] not in self.states:
+				print("Error: " + transition[0] + " not a valid state")
+				raise ValueError
+			if transition[2] not in self.states:
+				print("Error: " + transition[2] + " not a valid state")
+				raise ValueError
+			if transition[1] not in self.alphabet and transition[1] is not "&":
+				print("Error: " + transition[1] + " not a valid symbol")
+				raise ValueError
+
+		self.transitions = transitions
+
+	# add new transition
+	def addTransition(self, q, a, r):
+		if q not in self.states:
+			print("Error: " + q + " not a valid state")
+			return
+		if r not in self.states:
+			print("Error: " + r + " not a valid state")
+			return
+		if a not in self.alphabet:
+			print("Error: " + a + " not a valid symbol")
+			return
+		self.transitions[(q, a)] = r;
+
+	# iterate over all states
+	def showStates(self):
+		for state in self.states:
+			print state
+
+	# iterate over all input symbols
+	def showInputSymbols(self):
+		for symbol in self.alphabet:
+			print symbol
+
+	# iterate over transitions out of state q
+	def showTransitionsQ(self, q):
+		for transition in self.transitions:
+			if q == transition[0]:
+				print transition
+
+	# iterate over transitions on input symbol a
+	def showTransitionsA(self, a):
+		for transition in self.transitions:
+			if a == transition[1]:
+				print transition
+
+def read_NFA(filename):
+	with open(filename, 'r') as nf:
+		raw_nfa = nf.read()
+	nf.closed
+
+	# separate nfa components
+	raw_nfa = raw_nfa.split('\n')
+
+	# sanitize nfa of comments
+	nfa = []
+	for line in raw_nfa:
+		line = re.sub('\s*//.*', '', line)
+		nfa.append(line)
+
+	# parse states
+	states = nfa[0].split(" ")
+
+	# parse alphabet
+	alphabet = nfa[1].split(" ")
+
+	# parse start state
+	start = nfa[2]
+
+	# parse accept states
+	accepts = nfa[3].split(" ")
+
+	# parse transitions
+	transitionList = []
+	transitions = []
+	for i in range(4, len(nfa) - 1):
+		transitionList.append(nfa[i])
+
+	for transition in transitionList:
+		transition = transition.split(" ")
+		transitions.append((transition[0], transition[1], transition[2]))
+
+	nfa = NFA(states, alphabet, start, accepts, transitions)
+	return nfa;
+
+def emptiness(nfa):
+	# check to see if the nfa has any accept states
+	if " " in nfa.accept:
+		return True
+
+	frontier = Queue.Queue()
+	marked = []
+
+	# add start state to queue
+	frontier.put(nfa.start)
+
+	while not frontier.empty():
+		# get current state
+		v = frontier.get()
+
+		# check if algorithm has already been in current state 
+		if v in marked:
+			continue
+		
+		# check if current state is an accept state
+		if v in nfa.accept:
+			return False
+
+		# add current state to marked
+		marked.append(v)
+
+		# iterate through other transitions to add to queue
+		for transition in nfa.transitions:
+			frontier.put(transition[2])
+
+	return True
+
+if __name__ == "__main__":
+	nfa = read_NFA(sys.argv[1])
+
+	isEmpty = emptiness(nfa)
+
+	if isEmpty:
+		sys.exit(0)
+	else:
+		sys.exit(1)
