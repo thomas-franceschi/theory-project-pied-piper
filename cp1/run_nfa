@@ -135,6 +135,9 @@ def singleton(w):
 	# create alphabet from input string
 	alphabet = list(w)
 
+	# append epsilon
+	alphabet.append("&")
+
 	# create list of states
 	states = []
 	for i in range(len(alphabet) + 1):
@@ -185,7 +188,8 @@ def emptiness(nfa):
 
 		# iterate through other transitions to add to queue
 		for transition in nfa.transitions:
-			frontier.put(transition[2])
+			if v == transition[0]:
+				frontier.put(transition[2])
 
 	return True
 

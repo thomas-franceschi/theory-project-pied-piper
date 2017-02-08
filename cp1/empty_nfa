@@ -129,7 +129,8 @@ def emptiness(nfa):
 
 		# iterate through other transitions to add to queue
 		for transition in nfa.transitions:
-			frontier.put(transition[2])
+			if v == transition[0]:
+				frontier.put(transition[2])
 
 	return True
 
