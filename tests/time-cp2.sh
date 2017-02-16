@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# If needed, please edit the following line to increase the maximum
+# value of n so that your solution is faster than Perl. Be sure to
+# commit your change so that we can give you full credit.
+NMAX=20
+
 ROOT="$(cd "$(dirname $0)" && pwd)"/..
 BIN=$ROOT/bin
 SUBMIT=$ROOT/cp2
@@ -12,7 +17,7 @@ cleanup() {
 trap cleanup EXIT
 
 echo -e "n\tperl\tours\tyours"
-for N in $(seq 1 30); do
+for N in $(seq 1 $NMAX); do
     echo "n $N" 1>&2
     R=$(perl -e "print '(a|)'x$N, 'a'x$N")
     W=$(perl -e "print 'a'x$N")
