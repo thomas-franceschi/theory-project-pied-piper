@@ -1,0 +1,182 @@
+#!/usr/bin/env python2.7
+
+# Kyle Williams and Thomas Franceschi
+
+import sys
+import re
+
+class NFA(object):
+	def __init__(self, states, alphabet, start, accept, transitions):
+		self.states = states
+		self.alphabet = alphabet
+		self.start = start
+		self.accept = accept
+
+		# check for valid transitions before adding transitions dict to nfa object
+		for transition in transitions:
+			if transition[0] not in self.states:
+				print("Error: " + transition[0] + " not a valid state")
+				raise ValueError
+			if transition[2] not in self.states:
+				print("Error: " + transition[2] + " not a valid state")
+				raise ValueError
+			if transition[1] not in self.alphabet and transition[1] is not "&":
+				print("Error: " + transition[1] + " not a valid symbol")
+				raise ValueError
+
+		self.transitions = transitions
+
+	# add new transition
+	def addTransition(self, q, a, r):
+		if q not in self.states:
+			print("Error: " + q + " not a valid state")
+			return
+		if r not in self.states:
+			print("Error: " + r + " not a valid state")
+			return
+		if a not in self.alphabet:
+			print("Error: " + a + " not a valid symbol")
+			return
+		self.transitions[(q, a)] = r;
+
+	# iterate over all states
+	def showStates(self):
+		for state in self.states:
+			print state
+
+	# iterate over all input symbols
+	def showInputSymbols(self):
+		for symbol in self.alphabet:
+			print symbol
+
+	# iterate over transitions out of state q
+	def showTransitionsQ(self, q):
+		for transition in self.transitions:
+			if q == transition[0]:
+				print transition
+
+	# iterate over transitions on input symbol a
+	def showTransitionsA(self, a):
+		for transition in self.transitions:
+			if a == transition[1]:
+				print transition
+
+def read_NFA(filename):
+	with open(filename, 'r') as nf:
+		raw_nfa = nf.read()
+	nf.closed
+
+	# separate nfa components
+	raw_nfa = raw_nfa.split('\n')
+
+	# sanitize nfa of comments
+	nfa = []
+	for line in raw_nfa:
+		line = re.sub('\s*//.*', '', line)
+		nfa.append(line)
+
+	# parse states
+	states = nfa[0].split(" ")
+
+	# parse alphabet
+	alphabet = nfa[1].split(" ")
+
+	# parse start state
+	start = nfa[2]
+
+	# parse accept states
+	accepts = nfa[3].split(" ")
+
+	# parse transitions
+	transitionList = []
+	transitions = []
+	for i in range(4, len(nfa) - 1):
+		transitionList.append(nfa[i])
+
+	for transition in transitionList:
+		transition = transition.split(" ")
+		transitions.append((transition[0], transition[1], transition[2]))
+
+	nfa = NFA(states, alphabet, start, accepts, transitions)
+	return nfa;
+
+def write_NFA(nfa):
+	# write list of states
+	for state in nfa.states:
+		sys.stdout.write("(" + state[0] + "," + state[1] + ")")
+		if state != nfa.states[len(nfa.states)-1]:
+			sys.stdout.write(" ")
+
+	sys.stdout.write("\n")
+
+	# write symbols in alphabet
+	for symbol in nfa.alphabet:
+		sys.stdout.write(symbol)
+		if symbol != nfa.alphabet[len(nfa.alphabet)-1]:
+			sys.stdout.write(" ")
+
+	sys.stdout.write("\n")
+
+	# write start state
+	sys.stdout.write("(" + nfa.start[0] + "," + nfa.start[1] + ")")
+
+	sys.stdout.write("\n")
+
+	# write list of accept states
+	for accept in nfa.accept:
+		sys.stdout.write("(" + accept[0] + "," + accept[1] + ")")
+		if accept != nfa.accept[len(nfa.accept)-1]:
+			sys.stdout.write(" ")
+	
+	sys.stdout.write("\n")
+
+	# write transitions
+	for transition in nfa.transitions:
+		# current state + input symbol + next state
+		sys.stdout.write("(" + transition[0][0] + "," + transition[0][1] + ") " + transition[1] + " (" + transition[2][0] + "," + transition[2][1] + ")")
+		sys.stdout.write("\n")
+
+def intersection(nfa1, nfa2):
+	# cross product of states
+	states = []
+	for q in nfa1.states:
+		for r in nfa2.states:
+			states.append((q, r))
+
+	# intersection of alphabets
+	alphabet = []
+	for symbol in nfa1.alphabet:
+		if symbol in nfa2.alphabet:
+			alphabet.append(symbol)
+
+	# start state tuple
+	start = (nfa1.start, nfa2.start)
+
+	# cross product of accept states
+	accept = []
+	for state in states:
+		# if either state is an accept state in either list
+		if state[0] in nfa1.accept and state[1] in nfa2.accept:
+			accept.append(state)
+
+	# determine transitions
+	transitions = []
+	for t0 in nfa1.transitions:
+		for t1 in nfa2.transitions:
+			if t0[1] == t1[1]:
+				transitions.append(((t0[0], t1[0]), t0[1], (t0[2], t1[2])))
+			if t0[1] == "&":
+				transitions.append(((t0[0], t1[0]), "&", (t0[2], t1[0])))
+			if t1[1] == "&":
+				transitions.append(((t0[0], t1[0]), "&", (t0[0], t1[2])))
+
+	nfa = NFA(states, alphabet, start, accept, transitions)
+	return nfa;	
+
+if __name__ == "__main__":
+	nfa0 = read_NFA(sys.argv[1])
+	nfa1 = read_NFA(sys.argv[2])
+
+	intersect_nfa = intersection(nfa0, nfa1)
+
+	write_NFA(intersect_nfa)

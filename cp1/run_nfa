@@ -2,18 +2,10 @@
 
 # Kyle Williams and Thomas Franceschi
 
-# TODO
-
-	# test scripts for singleton, emptiness, and intersection
-
-# Questions
-
-	# empty language for "empty1.nfa"
-
+import sys
 import re
 import Queue
 
-# -----------------------------------------------------------------------------------
 class NFA(object):
 	def __init__(self, states, alphabet, start, accept, transitions):
 		self.states = states
@@ -70,7 +62,6 @@ class NFA(object):
 			if a == transition[1]:
 				print transition
 
-# -----------------------------------------------------------------------------------
 def read_NFA(filename):
 	with open(filename, 'r') as nf:
 		raw_nfa = nf.read()
@@ -110,44 +101,42 @@ def read_NFA(filename):
 	nfa = NFA(states, alphabet, start, accepts, transitions)
 	return nfa;
 
-def write_NFA(nfa, filename):
-	with open(filename, 'w') as nf:
-	
-		# write list of states
-		for state in nfa.states:
-			nf.write(state + " ")
+def write_NFA(nfa):
+	# write list of states
+	for state in nfa.states:
+		sys.stdout.write(state + " ")
 
-		nf.write("\n")
+	sys.stdout.write("\n")
 
-		# write symbols in alphabet
-		for symbol in nfa.alphabet:
-			nf.write(symbol + " ")
+	# write symbols in alphabet
+	for symbol in nfa.alphabet:
+		sys.stdout.write(symbol + " ")
 
-		nf.write("\n")
+	sys.stdout.write("\n")
 
-		# write start state
-		nf.write(nfa.start)
+	# write start state
+	sys.stdout.write(nfa.start)
 
-		nf.write("\n")
+	sys.stdout.write("\n")
 
-		# write list of accept states
-		for accept in nfa.accept:
-			nf.write(accept + " ")
+	# write list of accept states
+	for accept in nfa.accept:
+		sys.stdout.write(accept + " ")
 
-		nf.write("\n")
+	sys.stdout.write("\n")
 
-		# write transitions
-		for transition in nfa.transitions:
-			# current state + input symbol + next state
-			nf.write(transition[0] + " " + transition[1] + " " + transition[2])
-			nf.write("\n")
+	# write transitions
+	for transition in nfa.transitions:
+		# current state + input symbol + next state
+		sys.stdout.write(transition[0] + " " + transition[1] + " " + transition[2])
+		sys.stdout.write("\n")
 
-	nf.closed
-
-# -----------------------------------------------------------------------------------
 def singleton(w):
 	# create alphabet from input string
 	alphabet = list(w)
+
+	# append epsilon
+	alphabet.append("&")
 
 	# create list of states
 	states = []
@@ -171,7 +160,6 @@ def singleton(w):
 	nfa = NFA(states, alphabet, start, accept, transitions)
 	return nfa;
 
-# -----------------------------------------------------------------------------------
 def emptiness(nfa):
 	# check to see if the nfa has any accept states
 	if " " in nfa.accept:
@@ -200,11 +188,11 @@ def emptiness(nfa):
 
 		# iterate through other transitions to add to queue
 		for transition in nfa.transitions:
-			frontier.put(transition[2])
+			if v == transition[0]:
+				frontier.put(transition[2])
 
 	return True
 
-# -----------------------------------------------------------------------------------
 def intersection(nfa1, nfa2):
 	# cross product of states
 	states = []
@@ -225,56 +213,42 @@ def intersection(nfa1, nfa2):
 	accept = []
 	for state in states:
 		# if either state is an accept state in either list
-		if state[0] in nfa1.accept or state[1] in nfa2.accept:
+		if state[0] in nfa1.accept and state[1] in nfa2.accept:
 			accept.append(state)
 
 	# determine transitions
-	
+	transitions = []
+	for t0 in nfa1.transitions:
+		for t1 in nfa2.transitions:
+			if t0[1] == t1[1]:
+				transitions.append(((t0[0], t1[0]), t0[1], (t0[2], t1[2])))
+			if t0[1] == "&":
+				transitions.append(((t0[0], t1[0]), "&", (t0[2], t1[0])))
+			if t1[1] == "&":
+				transitions.append(((t0[0], t1[0]), "&", (t0[0], t1[2])))
 
-	print states
-	print alphabet
-	print start
-	print accept
+	nfa = NFA(states, alphabet, start, accept, transitions)
+	return nfa;	
 
 if __name__ == "__main__":
+	run_nfa = read_NFA(sys.argv[1])
 
-	nfa1 = read_NFA("./test.nfa")
-	nfa2 = read_NFA("./test2.nfa") 
+	while True:
+		# handle EOF
+		try:
+			w = raw_input('')
+		except EOFError:
+			break
 
-	intersection(nfa1, nfa2)
+		# create singleton
+		singleton_nfa = singleton(w)
+		# find intersection of singleton and nfa file
+		intersection_nfa = intersection(run_nfa, singleton_nfa)
+		# see if the empty set is accepted
+		empty = emptiness(intersection_nfa)
 
-	# nfa = read_NFA("../examples/sipser-n1.nfa")
-	# write_NFA(nfa, "./test-com.nfa")
-
-	# nfa = singleton("010")
-	# write_NFA(nfa, "./test-singleton.nfa")
-
-	# nfa = read_NFA("../examples/empty2.nfa")
-	# print emptiness(nfa)
-
-	# nfa = read_NFA('../examples/empty2.nfa')
-
-	# nfa = read_NFA('./test.nfa')
-
-	# print("states")
-	# nfa.showStates()
-
-	# print("symbols")
-	# nfa.showInputSymbols()
-
-	# print("transitions q")
-	# nfa.showTransitionsQ("q1")
-
-	# print("transitions a")
-	# nfa.showTransitionsA("a")
-
-	# print("add transition q")
-	# nfa.addTransition("q1", "a", "q2")	
-	# print("transition q")
-	# nfa.showTransitionsQ("q1")
-
-	# print("transition a")
-
-	# nfa.showTransitionsA("a")
-
-	# write_NFA(nfa, "./test.nfa")
+		# if nfa accepts string, print string
+		if not empty:
+			print w
+		else:
+			continue
