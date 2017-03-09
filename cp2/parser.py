@@ -12,65 +12,59 @@ class baseParser:
 		self.M = ''									#Output
 
 	def parseRegexp(self):
-		print('parseRegexp()')
 		self.M = self.parseUnion()
-		if self.counter + 1 == self.length:
+		if self.counter == self.length:
 			return self.M
 		else:
-			print('error in parseRegexp()')
-			return self.M #ERROR
+			print('regex error, count: ' + str(self.counter) + ' length: ' + str(self.length))
+			return 1 #ERROR
 
 	def parseUnion(self):
-		print('parseUnion()')
 		self.M = self.parseConcat()
-		if self.expression[self.counter + 1] == '|': 	#If next token is |
-			print('found a |')
-			self.counter = self.counter + 1 			#'read' |
+		if self.counter == self.length:
+			return self.M
+		if self.expression[self.counter] == '|': 			#If next token is |
+			self.counter = self.counter + 1 				#'read' |
 			self.M = self.union(self.M, self.parseConcat())
 		return self.M
 
 	def parseConcat(self):
-		print('parseConcat()')
-		if self.counter + 1 == self.length or self.expression[self.counter + 1] == '|' or self.expression[self.counter + 1] == ')':
-			print('found a ' + self.expression[self.counter+1])
+		if self.counter == self.length:
+			return self.epsilon()
+		if self.expression[self.counter] == '|' or self.expression[self.counter] == ')':
 			return self.epsilon()
 		else:
 			self.M = self.parseUnary()
-			if self.counter < self.length and self.expression[self.counter + 1] != '|' and self.expression[self.counter + 1] != ')':
+			while self.counter < self.length and self.expression[self.counter] != '|' and self.expression[self.counter] != ')':
 				self.M = self.concat(self.M, self.parseUnary())
 			return self.M
 
 	def parseUnary(self):
-		print('parseUnary()')
 		self.M = self.parsePrimary()
-		if self.expression[self.counter+1] == '*':
-			print('found a star')
+		if self.counter == self.length:
+			return self.M
+		if self.expression[self.counter] == '*':	
 			self.counter = self.counter + 1;		#read *
 			return self.star(self.M)
 		else:
 			return self.M
 
 	def parsePrimary(self):
-		print('parsePrimary()')
-		if self.expression[self.counter + 1] == '(':
-			print('found a (')
+		if self.expression[self.counter] == '(':
 			self.counter = self.counter + 1		#read (
 			self.M = self.parseUnion()
 			self.counter = self.counter + 1		#read )
-			print('found a )')
 			return self.M
-		elif self.expression[self.counter + 1] == '@':
-			print('found a @')
+		elif self.expression[self.counter] == '@':
 			self.counter = self.counter + 1		#read @
 			return self.emptyset()
-		elif self.expression[self.counter + 1] != '(' and self.expression[self.counter+1] != ')' and self.expression[self.counter + 1] != '*' and self.expression[self.counter + 1] != '|':
-			self.counter = self.counter + 1		#read a
+		elif self.expression[self.counter] != '(' and self.expression[self.counter] != ')' and self.expression[self.counter] != '*' and self.expression[self.counter] != '|':
 			a = self.expression[self.counter]
-			print('found a: ' + a)
+			self.counter = self.counter + 1
 			return self.symbol(a)
 		else:
-			print('Error in parsePrimary()')
-			return self.M #Error
+			print('parse primary error')
+			return 1 #Error
 
 	#Placeholders
 
@@ -94,7 +88,7 @@ class baseParser:
 
 if __name__ == "__main__":
 	
-	expression = '(ab|a)*'
+	#expression = '(ab|a)*'
 	length = len(expression)
 	counter = 0
 	parser = baseParser(expression, length, counter)

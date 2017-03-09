@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ROOT="$(cd "$(dirname $0)" && pwd)"/..
-BIN=$ROOT/bin
+BIN=$ROOT/bin.linux
 SUBMIT=$ROOT/cp2
 EXAMPLES=$ROOT/examples
 TMPDIR=${TMPDIR:-/tmp}/test-cp2.$$
