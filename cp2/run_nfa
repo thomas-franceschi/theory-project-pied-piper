@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+
+from __future__ import print_function
+import nfa
+import argparse
+import sys
+
+argparser = argparse.ArgumentParser()
+argparser.add_argument('nfa')
+args = argparser.parse_args()
+m = nfa.NFA.read(open(args.nfa))
+for line in sys.stdin:
+    line = line.rstrip('\n')
+    mw = nfa.NFA.intersect(m, nfa.NFA.singleton(line))
+    if not mw.is_empty():
+        print(line)
