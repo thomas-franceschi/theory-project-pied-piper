@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+import nfa
+import sys
+from operations import *
+
+m = nfa.NFA.read(open(sys.argv[1]))
+ms = star(m)
+ms.write(sys.stdout)
