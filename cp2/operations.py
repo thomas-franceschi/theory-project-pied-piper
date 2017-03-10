@@ -60,16 +60,42 @@ def union(M1, M2):
 	uNFA.add_transition( 0, '&', NFA2.start + offset)
 	uNFA.set_start(0)
 
-	uNFA.write(sys.stdout)
 	return uNFA
 
 def concat(M1, M2):
 	cNFA = NFA()
 	NFA1 = M1
 	NFA2 = M2
+	offset = len(NFA1.states)
+
+	#copy in states
+	for state in NFA1.states:
+		cNFA.states.add( state )
+	for state in NFA2.states:
+		cNFA.states.add( state + offset )
+
+	#copy in transitions
+	for trans in NFA1.transitions:
+		transit = cNFA.Transition( trans[0], trans[1], trans[2] )
+		cNFA.add(transit)
+	for trans in NFA2.transitions:
+		transit = cNFA.Transition( trans[0] + offset, trans[1], trans[2] + offset )
+		cNFA.add(transit)
+
+	#connect accept states to second start state
+	for state in NFA1.accept:
+		cNFA.add_transition( state, '&', NFA2.start + offset)
+
+	#set accept state
+	for state in NFA2.accept:
+		cNFA.add_accept(state + offset)
+
+	#set start state
+	cNFA.set_start(NFA1.start)
+
 	cNFA.set_start(M1.start)
 	for state in M1.accept:
-		cNFA.add_transition( state, '&', NFA2.start)
+		cNFA.add_transition( state, '&', NFA2.start + offset)
 	return cNFA
 
 def star(M):
@@ -106,10 +132,11 @@ def star(M):
 
 if __name__ == '__main__':
 	#epsilon()
-	#m1 = NFA.read(open(sys.argv[1]))
-	#m2 = NFA.read(open(sys.argv[2]))
-	#union(m1, m2)
+	m1 = NFA.read(open(sys.argv[1]))
+	m2 = NFA.read(open(sys.argv[2]))
+	mc = concat(m1, m2)
+	mc.write(sys.stdout)
 
-	m = NFA.read(open(sys.argv[1]))
-	ms = star(m)
-	ms.write(sys.stdout)
+	#m = NFA.read(open(sys.argv[1]))
+	#ms = star(m)
+	#ms.write(sys.stdout)
