@@ -5,6 +5,9 @@ Union -> Union "|" Concat
 Union -> Concat
 Concat -> Concat Unary
 Concat -> &
+
+Transduction -> 
+
 Unary -> Primary "*"
 Unary -> Primary
 Primary -> a              # where a is not "@", "(", ")", "|", or "*"
