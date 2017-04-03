@@ -1,15 +1,14 @@
 This grammar is not used by any program, so the format is flexible. We
 use quoted strings for terminal symbols and & for the empty string.
 
+Transduction -> Transduction ":" Union
+Transduction -> Union
 Union -> Union "|" Concat
 Union -> Concat
 Concat -> Concat Unary
 Concat -> &
-
-Transduction -> 
-
 Unary -> Primary "*"
 Unary -> Primary
-Primary -> a              # where a is not "@", "(", ")", "|", or "*"
+Primary -> a              # where a is not "@", "(", ")", "|", ":", or "*"
 Primary -> "@"
-Primary -> "(" Union ")"
+Primary -> "(" Transduction ")"

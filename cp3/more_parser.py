@@ -63,7 +63,7 @@ class baseParser:
 	def parsePrimary(self):
 		if self.expression[self.counter] == '(':
 			self.counter = self.counter + 1		#read (
-			self.M = self.parseUnion()
+			self.M = self.parseTransduce()
 			self.counter = self.counter + 1		#read )
 			return self.M
 		elif self.expression[self.counter] == '@':

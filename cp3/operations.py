@@ -1,5 +1,3 @@
-#!/usr/bin/env python2.7
-
 # CP3
 # Kyle Williams
 # Thomas Franceschi

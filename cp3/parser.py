@@ -1,8 +1,6 @@
-#CP3
-#Thomas Franceschi
-#Kyle Williams
-
-#import sys
+# CP3
+# Thomas Franceschi
+# Kyle Williams
 
 class baseParser:
 	def __init__(self, expression, length, counter):
@@ -63,7 +61,7 @@ class baseParser:
 	def parsePrimary(self):
 		if self.expression[self.counter] == '(':
 			self.counter = self.counter + 1		#read (
-			self.M = self.parseUnion()
+			self.M = self.parseTransduce()
 			self.counter = self.counter + 1		#read )
 			return self.M
 		elif self.expression[self.counter] == '@':
