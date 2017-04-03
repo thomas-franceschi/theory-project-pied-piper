@@ -17,6 +17,7 @@ class baseParser:
 			return self.M
 		else:
 			print('regex error, count: ' + str(self.counter) + ' length: ' + str(self.length))
+			print(self.M)
 			return 1 #ERROR
 
 	# Parse transduction

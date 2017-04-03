@@ -167,15 +167,3 @@ def transduce(M1, M2):
 	for state in M1.accept:
 		tNFT.add_transition( state, '&', '&', NFT2.start + offset)
 	return tNFT
-
-
-if __name__ == '__main__':
-	#epsilon()
-	m1 = NFT.read(open(sys.argv[1]))
-	m2 = NFT.read(open(sys.argv[2]))
-	mc = concat(m1, m2)
-	mc.write(sys.stdout)
-
-	#m = NFT.read(open(sys.argv[1]))
-	#ms = star(m)
-	#ms.write(sys.stdout)
