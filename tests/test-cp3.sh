@@ -63,7 +63,7 @@ else
   echo "singleton_nft: SKIPPED"
 fi
 
-NFTS=$(echo $EXAMPLES/{sipser-t1,sipser-t2,increment}.nft)
+NFTS=$(echo $EXAMPLES/{sipser-t1,sipser-t2,increment,double,halve}.nft)
 
 # Optional tests
 for OP in union concat; do
