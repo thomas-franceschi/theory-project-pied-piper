@@ -1,0 +1,11 @@
+// Accepts strings that are powers of two (and outputs "1").
+
+// For example:
+// 1 -> 1
+// 11 -> 1
+// 111 -> reject
+// 1111 -> 1
+// 11111 -> reject
+
+{(1(1:))*}; // repeatedly delete every other 1
+1           // must be exactly one 1 left

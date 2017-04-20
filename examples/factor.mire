@@ -1,3 +1,26 @@
-(:#)111*(:#)111*((:#)111*)*; // partition string into 2+ partitions of 2+ symbols each
-{(x*(#1:x#)1*)*};            // x-out all partitions at same speed
-((x:1)*#)*                   // check that all partitions were the same size
+// If a number (in unary notation) is composite, factor it; otherwise, reject.
+
+// For example:
+// 11     -> reject (2 is prime)
+// 111    -> reject (3 is prime)
+// 1111   -> 11#11 (4 = 2*2)
+// 11111  -> reject (5 is prime)
+// 111111 -> 11#11#11 or 111#111 (6 = 3*2)
+
+// Divide the string into substrings, each of which starts with a #.
+// There must be at least two substrings, and each substring must have
+// at least two 1's.
+(:#)111*(:#)111*((:#)111*)*;
+
+// Insert a ^ at the beginning of each substring.
+(#(:^)1*)*;
+
+// Move all the ^'s to the right at the same speed.
+{(#1*(^1:1^)1*)*};
+
+// Check that every ^ reached the end of its substring.
+// Also, clean up the ^'s.
+(#1*(^:))*;
+
+// Clean up the initial #.
+(#:)1*(#1*)*
