@@ -74,18 +74,22 @@ else
   echo "uncopy.mire: SKIPPED"
 fi
 
-if [ -f $SUBMIT/unscramble.mire ]; then
-  echo -n "mire unscramble.mire: "
+if [ -f $SUBMIT/sort.mire ]; then
+  echo -n "mire sort.mire: "
   cat <<EOF >$TMPDIR/correct
 
+a
+b
+aa
 ab
 ab
-abab
-abab
+bb
+aabb
+aabb
 EOF
-  $BIN/mire -f $SUBMIT/unscramble.mire <$TMPDIR/input >$TMPDIR/student
+  $BIN/mire -f $SUBMIT/sort.mire <$TMPDIR/input >$TMPDIR/student
   diff $TMPDIR/correct $TMPDIR/student
   assert_true
 else
-  echo "uncopy.mire: SKIPPED"
+  echo "sort.mire: SKIPPED"
 fi
