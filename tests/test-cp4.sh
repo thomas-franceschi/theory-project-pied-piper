@@ -28,14 +28,24 @@ assert_false () {
 }
 
 if [ -x $SUBMIT/parse_program ]; then
+  for REGEXP in "a//comment" " a " " a //comment"; do
+    echo -n 'parse_program "'"$REGEXP"'": '
+    diff -q <($BIN/parse_program "$REGEXP")  <($SUBMIT/parse_program "$REGEXP")
+    assert_true
+  done
+  for FILE in log2a.mire log2u.mire log2b.mire factor.mire; do
+    echo -n "parse_program -f $FILE: "
+    diff -q <($BIN/parse_program -f $EXAMPLES/$FILE) <($SUBMIT/parse_program -f $EXAMPLES/$FILE)
+    assert_true
+  done
   for REGEXP in "(ab|a)*" "" "a" "@" "a*" "ab" "a|b" "a*b*" "(ab)*" "ab|cd" "(ab)|(cd)" "a*|b*" "(a|b)*" "(a)" "((a))" "()" "|" "(|)"; do
     echo -n 'parse_program "'"$REGEXP"'": '
-    test $($BIN/parse_program "$REGEXP") = $($SUBMIT/parse_program "$REGEXP")
+    diff -q <($BIN/parse_program "$REGEXP") <($SUBMIT/parse_program "$REGEXP")
     assert_true
   done
   for REGEXP in "a:b" "ab:cd" "a|b:c|d" "(a:b)(c:d)" "(a:b)|(c:d)" ":"; do
     echo -n 'parse_program "'"$REGEXP"'": '
-    test $($BIN/parse_program "$REGEXP") = $($SUBMIT/parse_program "$REGEXP")
+    diff -q <($BIN/parse_program "$REGEXP") <($SUBMIT/parse_program "$REGEXP")
     assert_true
   done
   for REGEXP in "a:b;c:d" "{a:b};{c:d}"; do
@@ -48,7 +58,6 @@ else
 fi
 
 if [ -x $SUBMIT/mire ]; then
-  echo -n 'mire "(0|1)*(0:1)(1:0)*": '
   cat <<EOF >$TMPDIR/input
 000
 001
@@ -57,13 +66,16 @@ if [ -x $SUBMIT/mire ]; then
 100
 101
 110
+111
 EOF
-  diff <($BIN/mire "(0|1)*(0:1)(1:0)*" <$TMPDIR/input) <($SUBMIT/mire "(0|1)*(0:1)(1:0)*" <$TMPDIR/input)
-  assert_true
 
-  echo -n 'mire "(1(1:))*": '
+  for REGEXP in "(0|1)*(0:1)(1:0)*" "(0:1)|(1:0);(0|1)*(0:1)(1:0)*"; do
+      echo -n "mire \"$REGEXP\": "
+      diff <($BIN/mire "$REGEXP" <$TMPDIR/input) <($SUBMIT/mire "$REGEXP" <$TMPDIR/input)
+      assert_true
+  done
+
   cat <<EOF >$TMPDIR/input
-
 1
 11
 111
@@ -73,35 +85,34 @@ EOF
 1111111
 11111111
 EOF
-  diff <($BIN/mire "(1(1:))*" <$TMPDIR/input) <($SUBMIT/mire "(1(1:))*" <$TMPDIR/input)
-  assert_true
-
-  echo -n 'mire "(1(1:))*;(1(1:))*": '
-  cat <<EOF >$TMPDIR/input
-
-1
-11
-111
-1111
-11111
-111111
-1111111
-11111111
-EOF
-  diff <($BIN/mire "(1(1:))*;(1(1:))*" <$TMPDIR/input) <($SUBMIT/mire "(1(1:))*;(1(1:))*" <$TMPDIR/input)
-  assert_true
 
   echo -n 'mire "{(1(1:))*};1": '
+  diff <($BIN/mire "{(1(1:))*};1" <$TMPDIR/input) <($SUBMIT/mire "{(1(1:))*};1" <$TMPDIR/input)
+  assert_true
+
   cat <<EOF >$TMPDIR/input
 1
 11
 111
 1111
-11111
-111111
-1111111
-11111111
 EOF
-  diff <($BIN/mire "{(1(1:))*};1" <$TMPDIR/input) <($SUBMIT/mire "{(1(1:))*};1" <$TMPDIR/input)
+
+  echo -n 'mire -f log2u.mire: '
+  diff <($BIN/mire -f $EXAMPLES/log2u.mire <$TMPDIR/input) <($SUBMIT/mire -f $EXAMPLES/log2u.mire <$TMPDIR/input)
+  assert_true
+
+  cat <<EOF >$TMPDIR/input
+1
+10
+11
+100
+101
+110
+111
+1000
+EOF
+
+  echo -n 'mire -f log2b.mire: '
+  diff <($BIN/mire -f $EXAMPLES/log2u.mire <$TMPDIR/input) <($SUBMIT/mire -f $EXAMPLES/log2u.mire <$TMPDIR/input)
   assert_true
 fi

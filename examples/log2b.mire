@@ -1,0 +1,12 @@
+// Accepts strings that are powers of two and outputs the log as a binary number.
+
+// For example:
+// 1 -> 
+// 11 -> 1
+// 111 -> reject
+// 1111 -> 10
+// 11111 -> reject
+
+10*(:#0*);                    // append counter
+{10*(0:)#(0|1)*(0:1)(1:0)*};  // delete 0, increment counter
+(1#:)(0|1)*                   // remove input and separator
