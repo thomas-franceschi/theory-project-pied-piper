@@ -1,8 +1,8 @@
 #!/usr/bin/env python2.7
 
-import nfa
+import nft
 import sys
 
-m = nfa.NFA.singleton(sys.argv[1])
+m = nft.NFT.singleton(sys.argv[1])
 m.write(sys.stdout)
 

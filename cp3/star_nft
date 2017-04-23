@@ -1,9 +1,9 @@
 #!/usr/bin/env python2.7
 
-import nfa
+import nft
 import sys
 from operations import *
 
-m = nfa.NFA.read(open(sys.argv[1]))
+m = nft.NFT.read(open(sys.argv[1]))
 ms = star(m)
 ms.write(sys.stdout)
