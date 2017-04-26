@@ -1,0 +1,4 @@
+(a|b)*(:#);													//append separator
+{((a*)(b:)(a|b)*(#:(#b))(a|b)*)};							//sort a's
+a*(#:)b*;													//remove delimiter
+a*b*

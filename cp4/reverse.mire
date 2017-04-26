@@ -1,0 +1,4 @@
+(a|b)*(:#);													//append separator
+{((a:)(a|b)*(#:(#a))(a|b)*)|((b:)(a|b)*(#:(#b))(a|b)*)};	//flip letters
+(#:)(a|b)*;													//remove delimiter
+(a|b)*
