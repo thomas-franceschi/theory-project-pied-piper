@@ -1,0 +1,18 @@
+#!/usr/bin/env python2.7
+
+import nft
+import sys
+
+m = nft.NFT.read(open(sys.argv[1]))
+transitions = nft.NFT.any_path(m)
+output = ''
+
+if transitions:
+	for t in transitions:
+		output = output + t.b
+
+	print output
+	sys.exit(0);
+
+else:
+	sys.exit(1);

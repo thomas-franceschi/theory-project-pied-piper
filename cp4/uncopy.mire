@@ -4,4 +4,4 @@
 {((a|b)*(#a:a#)(a|b)*($11:$)(1)*)|((a|b)*(#b:b#)(a|b)*($11:$)(1)*)};		//split words
 (a|b)*#(a|b)*$;																//check for right form
 {((a:)(a|b)*#(a:)(a|b)*$(a|b)*(:a))|((b:)(a|b)*#(b:)(a|b)*$(a|b)*(:b))};	//if starting letters same, delete both and copy past $
-((#$):)(a|b)*
+((#$):)(a|b)*																//remove delimiters
