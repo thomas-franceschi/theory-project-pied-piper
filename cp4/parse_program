@@ -4,6 +4,7 @@ import sys
 import re
 #from parser import *
 from more_parser import *
+from nft import *
 
 def file_stripper( data ):
 	cleandata = ''
@@ -42,18 +43,18 @@ def parser(expression):
 
 def run(program, w):
 	A = []
-	Mw = singleton(w)
-	A.push(Mw, 0)
+	Mw = NFT.singleton(w)
+	A.append((Mw, 0))
 	while len(A) > 0:
 		M, i = A.pop()
-		if any_path(M):
+		if NFT.any_path(M):
 			if i == len(program):
 				return M
-			else if program[i][1]: #islooping == true
-				A.push(M, i+1)
-				A.push(program[i+1],i)
-			else
-				A.push(program[i+1], i+1)
+			elif program[i][1]: #islooping == true
+				A.append((M, i+1))
+				A.append((program[i+1],i))
+			else:
+				A.append((program[i+1], i+1))
 	return emptyset()
 
 if __name__ == "__main__":
