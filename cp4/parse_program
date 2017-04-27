@@ -46,7 +46,7 @@ def run(program, w):
 	A.push(Mw, 0)
 	while len(A) > 0:
 		M, i = A.pop()
-		if M has an accepting path:
+		if any_path(M):
 			if i == len(program):
 				return M
 			else if program[i][1]: #islooping == true
