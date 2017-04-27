@@ -53,6 +53,14 @@ def run(program, w):
 		if NFT.any_path(M):
 			if i == len(program):
 				print("return M")
+				transitions = NFT.any_path(M)
+				output = ''
+
+				for t in transitions:
+					if t.b is not '&':
+						output = output + t.b
+
+				print (output)
 				return M
 			elif program[i][1]: #islooping == true
 				A.append((M, i+1))
@@ -61,7 +69,7 @@ def run(program, w):
 			else:
 				A.append((NFT.compose(M, program[i][0]), i+1))
 				print(i + 1)
-	print "return emptyset"
+	print("return emptyset")
 	#return emptyset
 	myNFT = NFT()
 	myNFT.set_start('0')
