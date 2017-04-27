@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+
+import sys
+from parse_program import *
+
+if __name__ == "__main__":
+	if len(sys.argv) == 3:
+		file = sys.argv[2]
+		#read in file as single line
+		with open(file, 'r') as myfile:
+			data = myfile.readlines()
+		expressions = file_stripper(data)
+
+	if len(sys.argv) == 2:
+		data = sys.argv[1]
+		expressions = string_stripper(data)
+	
+	expressions = expressions.split(';')
+	program = []
+
+	for expression in expressions:
+		program.append(parser(expression))
+
+	for line in sys.stdin:
+		#print len(program)
+		myNFT = run(program, line)
+		#myNFT.write(sys.stdout)

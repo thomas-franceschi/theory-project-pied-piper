@@ -2,8 +2,8 @@
 
 import sys
 import re
-#from parser import *
-from more_parser import *
+from parser import *
+#import more_parser
 from nft import *
 from collections import deque
 
@@ -39,6 +39,11 @@ def parser(expression):
 	counter = 0
 	parser = baseParser(expression, length, counter)
 	M = parser.parseRegexp()
+	if __name__ == '__main__':
+		if isLoop:
+			print('loop(' + M + ')')
+		else:
+			print(M)
 
 	return( M,isLoop )
 
@@ -88,15 +93,11 @@ if __name__ == "__main__":
 		expressions = string_stripper(data)
 	
 	expressions = expressions.split(';')
-	program = []
 
 	for expression in expressions:
-		program.append(parser(expression))
-
-	while True:
-		w = input()
-		#print len(program)
-		myNFT = run(program, w)
-		#myNFT.write(sys.stdout)
+		length = len(expression)
+		counter = 0
+		#print(expression)
+		parser(expression)
 
 
