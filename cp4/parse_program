@@ -1,0 +1,81 @@
+#!/usr/bin/python3
+
+import sys
+import re
+#from parser import *
+from more_parser import *
+
+def file_stripper( data ):
+	cleandata = ''
+	#strip all whitespace
+	for line in data:
+		cleanline = line.split('//')
+		cleandata = cleandata + cleanline[0]
+
+	cleandata = re.sub('[\s+]','',cleandata)
+	#print(cleandata)
+	return(cleandata)
+
+def string_stripper( data ):
+	cleandata = ''
+	cleanline = data.split('//')
+	cleandata = cleandata + cleanline[0]
+
+	cleandata = re.sub('[\s+]','',cleandata)
+	#print(cleandata)
+	return(cleandata)
+
+def parser(expression):
+	isLoop = False
+	if len(expression) > 0:
+		if expression[0] == '{':
+			isLoop = True
+			expression = expression.replace('{','')
+			expression = expression.replace('}','')
+
+	length = len(expression)
+	counter = 0
+	parser = baseParser(expression, length, counter)
+	M = parser.parseRegexp()
+
+	return( (M,isLoop) )
+
+def run(program, w):
+	A = []
+	Mw = singleton(w)
+	A.push(Mw, 0)
+	while len(A) > 0:
+		M, i = A.pop()
+		if M has an accepting path:
+			if i == len(program):
+				return M
+			else if program[i][1]: #islooping == true
+				A.push(M, i+1)
+				A.push(program[i+1],i)
+			else
+				A.push(program[i+1], i+1)
+	return emptyset()
+
+if __name__ == "__main__":
+	if len(sys.argv) == 3:
+		file = sys.argv[2]
+		#read in file as single line
+		with open(file, 'r') as myfile:
+			data = myfile.readlines()
+		expressions = file_stripper(data)
+
+	if len(sys.argv) == 2:
+		data = sys.argv[1]
+		expressions = string_stripper(data)
+	
+	expressions = expressions.split(';')
+	program = []
+
+	for expression in expressions:
+		program.append(parser(expression))
+
+	while True:
+		w = input()
+		run(program, w)
+
+
