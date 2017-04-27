@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python2.7
 
 import sys
 import re
@@ -39,7 +39,7 @@ def parser(expression):
 	parser = baseParser(expression, length, counter)
 	M = parser.parseRegexp()
 
-	return( (M,isLoop) )
+	return( M,isLoop )
 
 def run(program, w):
 	A = []
@@ -52,9 +52,9 @@ def run(program, w):
 				return M
 			elif program[i][1]: #islooping == true
 				A.append((M, i+1))
-				A.append((program[i+1],i))
+				A.append((program[i+1][0],i))
 			else:
-				A.append((program[i+1], i+1))
+				A.append((program[i+1][0], i+1))
 	return emptyset()
 
 if __name__ == "__main__":
