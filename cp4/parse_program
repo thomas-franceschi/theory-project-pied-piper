@@ -5,6 +5,7 @@ import re
 #from parser import *
 from more_parser import *
 from nft import *
+from collections import deque
 
 def file_stripper( data ):
 	cleandata = ''
@@ -42,20 +43,29 @@ def parser(expression):
 	return( M,isLoop )
 
 def run(program, w):
-	A = []
+	print w
+	A = deque([])
 	Mw = NFT.singleton(w)
 	A.append((Mw, 0))
+
 	while len(A) > 0:
-		M, i = A.pop()
+		M, i = A.popleft()
 		if NFT.any_path(M):
 			if i == len(program):
+				print "return M"
 				return M
 			elif program[i][1]: #islooping == true
 				A.append((M, i+1))
-				A.append((program[i+1][0],i))
+				A.append((NFT.compose(M, program[i][0]), i))
+				print i + 1
 			else:
-				A.append((program[i+1][0], i+1))
-	return emptyset()
+				A.append((NFT.compose(M, program[i][0]), i+1))
+				print i + 1
+	print "return emptyset"
+	#return emptyset
+	myNFT = NFT()
+	myNFT.set_start('0')
+	return myNFT
 
 if __name__ == "__main__":
 	if len(sys.argv) == 3:
@@ -73,10 +83,13 @@ if __name__ == "__main__":
 	program = []
 
 	for expression in expressions:
+		print expression
 		program.append(parser(expression))
 
 	while True:
 		w = input()
-		run(program, w)
+		#print len(program)
+		myNFT = run(program, w)
+		#myNFT.write(sys.stdout)
 
 

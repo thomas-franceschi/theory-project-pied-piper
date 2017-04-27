@@ -100,8 +100,8 @@ class NFT(object):
                 if t.r not in visited:
                     agenda.append(path+[t])
                     visited.add(t.r)
-        raise ValueError('no path')
-
+        #raise ValueError('no path')
+        return False
     def is_empty(m):
         """Returns true iff an NFT recognizes the empty language."""
         try:
