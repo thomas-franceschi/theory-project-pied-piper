@@ -43,7 +43,7 @@ def parser(expression):
 	return( M,isLoop )
 
 def run(program, w):
-	print w
+	print(w)
 	A = deque([])
 	Mw = NFT.singleton(w)
 	A.append((Mw, 0))
@@ -52,15 +52,15 @@ def run(program, w):
 		M, i = A.popleft()
 		if NFT.any_path(M):
 			if i == len(program):
-				print "return M"
+				print("return M")
 				return M
 			elif program[i][1]: #islooping == true
 				A.append((M, i+1))
 				A.append((NFT.compose(M, program[i][0]), i))
-				print i + 1
+				print(i + 1)
 			else:
 				A.append((NFT.compose(M, program[i][0]), i+1))
-				print i + 1
+				print(i + 1)
 	print "return emptyset"
 	#return emptyset
 	myNFT = NFT()
@@ -83,7 +83,6 @@ if __name__ == "__main__":
 	program = []
 
 	for expression in expressions:
-		print expression
 		program.append(parser(expression))
 
 	while True:
