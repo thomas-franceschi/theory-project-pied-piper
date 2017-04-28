@@ -69,8 +69,17 @@ def run(program, w):
 
 	while len(A) > 0:
 		M, i = A.popleft()
-		#print(i)
+		#print('i: ' + str(i))
+		
 		if NFT.any_path(M):
+			transitions = NFT.any_path(M)
+			output = ''
+
+			for t in transitions:
+				if t.b is not '&':
+					output = output + t.b
+
+			#print ('new string: ' + output)
 			if i == len(program):
 				transitions = NFT.any_path(M)
 				output = ''
@@ -79,12 +88,12 @@ def run(program, w):
 					if t.b is not '&':
 						output = output + t.b
 
-				print (output)
+				print ( output)
 				return M
 			elif program[i][1] == True: #islooping == true
 				#print("looping")
 				A.append((M, i+1))
-				A.append((NFT.compose(M, program[i][0]), i))
+				A.append((NFT.compose(M,program[i][0]), i))
 			else:
 				A.append((NFT.compose(M, program[i][0]), i+1))
 	#return emptyset
@@ -110,6 +119,13 @@ if __name__ == "__main__":
 
 	for expression in expressions:
 		program.append(good_parser(expression))
+		#M, isloop = good_parser(expression)
+		#M.write(sys.stdout)
+
+	#M1 = good_parser("{(1(1:))*}")
+	#M2 = good_parser("1")
+	#composed = NFT.compose( M2[0],M1[0] )
+	#composed.write(sys.stdout)
 
 	while True:
 		w = input()
