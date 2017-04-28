@@ -129,15 +129,15 @@ class NFT(object):
         m.set_start(q(m1.start,m2.start))
         for a in m1.transitions_on:
             for t1 in m1.transitions_on[a]:
-                if t1.a[1] != ee[1]:
-                    for t2 in m2.transitions_on.get(t1.a[1], []):
-                        m.add_transition(q(t1.q,t2.q), (t1.a[0],t2.a[1]), q(t1.r,t2.r))
+                if t1.b != ee:
+                    for t2 in m2.transitions_on.get(t1.b, []):
+                        m.add_transition(q(t1.q,t2.q), t1.a,t2.b, q(t1.r,t2.r))
                 else:
                     for q2 in m2.states:
-                        m.add_transition(q(t1.q,q2), (t1.a[0],ee[1]), q(t1.r,q2))
+                        m.add_transition(q(t1.q,q2), t1.a,ee, q(t1.r,q2))
         for q1 in m1.states:
-            for t2 in m2.transitions_on.get(ee[0], []):
-                m.add_transition(q(q1,t2.q), (ee[0],t2.a[1]), q(q1,t2.r))
+            for t2 in m2.transitions_on.get(ee, []):
+                m.add_transition(q(q1,t2.q), ee,t2.b, q(q1,t2.r))
         for q1 in m1.accept:
             for q2 in m2.accept:
                 m.add_accept(q(q1,q2))
