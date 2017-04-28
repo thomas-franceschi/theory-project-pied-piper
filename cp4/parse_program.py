@@ -2,10 +2,10 @@
 
 import sys
 import re
-#from parser import *
 from more_parser import *
 from nft import *
 from collections import deque
+import parser
 
 def file_stripper( data ):
 	cleandata = ''
@@ -27,7 +27,7 @@ def string_stripper( data ):
 	#print(cleandata)
 	return(cleandata)
 
-def parser(expression):
+def good_parser(expression):
 	isLoop = False
 	if len(expression) > 0:
 		if expression[0] == '{':
@@ -42,17 +42,45 @@ def parser(expression):
 
 	return( M,isLoop )
 
+def dummy_parser(expression):
+	isLoop = False
+	if len(expression) > 0:
+		if expression[0] == '{':
+			isLoop = True
+			expression = expression.replace('{','')
+			expression = expression.replace('}','')
+
+	length = len(expression)
+	counter = 0
+	myparser = parser.baseParser(expression, length, counter)
+	M = myparser.parseRegexp()
+	if isLoop:
+		print('loop(' + M + ')')
+	else:
+		print(M)
+
+	return( M,isLoop )
+
 def run(program, w):
-	#print(w)
+	
 	A = deque([])
 	Mw = NFT.singleton(w)
 	A.append((Mw, 0))
 
 	while len(A) > 0:
 		M, i = A.popleft()
+		print(i)
 		if NFT.any_path(M):
+			print("has path")
+			transitions = NFT.any_path(M)
+			output = ''
+
+			for t in transitions:
+				if t.b is not '&':
+					output = output + t.b
+			print (output)
 			if i == len(program):
-				#print("return M")
+				print("works")
 				transitions = NFT.any_path(M)
 				output = ''
 
@@ -62,15 +90,16 @@ def run(program, w):
 
 				print (output)
 				return M
-			elif program[i][1]: #islooping == true
+			elif program[i][1] == True: #islooping == true
+				#print("looping")
 				A.append((M, i+1))
 				A.append((NFT.compose(M, program[i][0]), i))
-				#print(i + 1)
 			else:
 				A.append((NFT.compose(M, program[i][0]), i+1))
-				#print(i + 1)
-	#print("return emptyset")
+		else:
+			print('no path')
 	#return emptyset
+	print('emptyset')
 	myNFT = NFT()
 	myNFT.set_start('0')
 	return myNFT
@@ -91,7 +120,7 @@ if __name__ == "__main__":
 	program = []
 
 	for expression in expressions:
-		program.append(parser(expression))
+		program.append(good_parser(expression))
 
 	while True:
 		w = input()

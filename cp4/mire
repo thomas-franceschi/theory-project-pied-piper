@@ -3,6 +3,7 @@
 
 import sys
 from parse_program import *
+import fileinput
 
 if __name__ == "__main__":
 	if len(sys.argv) == 3:
@@ -20,9 +21,8 @@ if __name__ == "__main__":
 	program = []
 
 	for expression in expressions:
-		program.append(parser(expression))
+		program.append(good_parser(expression))
 
 	for line in sys.stdin:
-		#print len(program)
+		line = string_stripper(line);
 		myNFT = run(program, line)
-		#myNFT.write(sys.stdout)
