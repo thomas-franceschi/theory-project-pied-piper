@@ -69,18 +69,9 @@ def run(program, w):
 
 	while len(A) > 0:
 		M, i = A.popleft()
-		print(i)
+		#print(i)
 		if NFT.any_path(M):
-			print("has path")
-			transitions = NFT.any_path(M)
-			output = ''
-
-			for t in transitions:
-				if t.b is not '&':
-					output = output + t.b
-			print (output)
 			if i == len(program):
-				print("works")
 				transitions = NFT.any_path(M)
 				output = ''
 
@@ -96,8 +87,6 @@ def run(program, w):
 				A.append((NFT.compose(M, program[i][0]), i))
 			else:
 				A.append((NFT.compose(M, program[i][0]), i+1))
-		else:
-			print('no path')
 	#return emptyset
 	print('emptyset')
 	myNFT = NFT()
