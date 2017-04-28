@@ -122,30 +122,25 @@ class NFT(object):
 
     @classmethod
     def compose(cls, m1, m2):
-        """Compose two NFTs."""
-
-        epsilon = cls.EPSILON
-        # This computes the state number of a pair of state numbers q1 and q2.
+        """Compose two finite transducers."""
+        ee = cls.EPSILON
         def q(q1, q2): return q1*len(m2.states)+q2
         m = cls()
         m.set_start(q(m1.start,m2.start))
-
-        # three cases for composition
-        for t1 in m1.transitions:
-            for t2 in m2.transitions:
-                if t1.b == t2.a:
-                    m.add_transition(q(t1.q, t2.q), t1.a, t2.b, q(t1.r, t2.r))
-                if t1.b == epsilon:
-                    m.add_transition(q(t1.q, t2.q), t1.a, epsilon, q(t1.r, t2.q))
-                    m.add_transition(q(t1.q, t2.r), t1.a, epsilon, q(t1.q, t2.r))
-                if t2.a == epsilon:
-                    m.add_transition(q(t1.q, t2.q), epsilon, t2.b, q(t1.q, t2.r))
-                    m.add_transition(q(t1.r, t2.q), epsilon, t2.b, q(t1.r, t2.r))
-
+        for a in m1.transitions_on:
+            for t1 in m1.transitions_on[a]:
+                if t1.a[1] != ee[1]:
+                    for t2 in m2.transitions_on.get(t1.a[1], []):
+                        m.add_transition(q(t1.q,t2.q), (t1.a[0],t2.a[1]), q(t1.r,t2.r))
+                else:
+                    for q2 in m2.states:
+                        m.add_transition(q(t1.q,q2), (t1.a[0],ee[1]), q(t1.r,q2))
+        for q1 in m1.states:
+            for t2 in m2.transitions_on.get(ee[0], []):
+                m.add_transition(q(q1,t2.q), (ee[0],t2.a[1]), q(q1,t2.r))
         for q1 in m1.accept:
             for q2 in m2.accept:
                 m.add_accept(q(q1,q2))
-
         return m
 
 if __name__ == "__main__":
