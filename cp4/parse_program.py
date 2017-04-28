@@ -88,7 +88,7 @@ def run(program, w):
 			else:
 				A.append((NFT.compose(M, program[i][0]), i+1))
 	#return emptyset
-	print('emptyset')
+	#print('emptyset')
 	myNFT = NFT()
 	myNFT.set_start('0')
 	return myNFT
